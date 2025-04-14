@@ -3,21 +3,17 @@ name: Flutter
 
 on:
   # Runs this action when you push on master
-push:
-  branches: [ "master" ]
-# Runs this when a PR against master is created
-pull_request:
-  branches: [ "master" ]
+  push:
+    branches: [ "master" ]
+  # Runs this when a PR against master is created
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   flutter_job:
-    
-    # The machine, we can also use windows-latest or ubuntu-latest
-    # We are choosing macos-latest because we will be also building for iOS
     runs-on: macos-latest
 
     steps:
-
       # Clones the project on the machine
       - uses: actions/checkout@v4
       
@@ -29,18 +25,17 @@ jobs:
           # flutter-version: '3.16.8'
           # ^ If you want to use a specific version of flutter
 
-      # Fetches proj dependencies from pub
+      # Fetches project dependencies from pub
       - name: Install dependencies
         run: flutter pub get
-          # ^ If you want to use a specific version of flutter
 
       # Verifies if the dart code is formatted well
       - name: Verify formatting
         run: dart format --output=none .
-        # --set-exit-if-changed stops execution if the code isn´t well formatted
-        # --output=none prints files which needs to be formatted
+        # --set-exit-if-changed stops execution if the code isn’t well formatted
+        # --output=none prints files which need to be formatted
 
-      # Checks for Symantic errors. Can be configured using analysis_options.yaml
+      # Checks for Semantic errors. Can be configured using analysis_options.yaml
       - name: Analyze project source
         run: flutter analyze
         # optionally use --fatal-warnings to stop execution if warnings found          
@@ -49,6 +44,6 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      # Create android apk
+      # Create android appbundle
       - name: Build appbundle
-        run: flutter build appbundle  
+        run: flutter build appbundle
