@@ -3,7 +3,7 @@ import 'package:myapp/calcula_combustivel_controller.dart';
 import 'package:provider/provider.dart';
 
 class CalculaCombustivelPage extends StatelessWidget {
-  const CalculaCombustivelPage({Key? key}) : super(key: key);
+const CalculaCombustivelPage({super.key});
 
   @override
   Widget build(BuildContext context) {
