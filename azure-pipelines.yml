@@ -1,42 +1,44 @@
 trigger:
   branches:
     include:
-      - main
+      - master
 
 pr:
   branches:
     include:
-      - main
+      - master
 
 pool:
   vmImage: 'macos-latest'
 
 steps:
-  - task: UseGitVersion@5
-    inputs:
-      versionSpec: '2.x'
-    displayName: 'Use Git'
-
+  # Clona o repositório Flutter estável
   - script: git clone https://github.com/flutter/flutter.git -b stable --depth 1
     displayName: 'Clone Flutter SDK'
 
+  # Adiciona o Flutter ao PATH
   - script: |
       echo "##vso[task.prependpath]$(System.DefaultWorkingDirectory)/flutter/bin"
       flutter --version
     displayName: 'Add Flutter to PATH'
 
+  # Instala dependências do projeto
   - script: flutter pub get
     displayName: 'Install dependencies'
 
+  # Verifica formatação do código
   - script: dart format --output=none .
     displayName: 'Verify formatting'
 
+  # Analisa o código Dart/Flutter
   - script: flutter analyze
     displayName: 'Analyze project source'
 
+  # Roda testes
   - script: flutter test
     displayName: 'Run tests'
 
+  # Gera o appbundle Android
   - script: flutter build appbundle
     displayName: 'Build appbundle'
 
