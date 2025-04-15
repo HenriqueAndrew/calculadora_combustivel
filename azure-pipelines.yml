@@ -1,0 +1,42 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'macos-latest'
+
+steps:
+  - task: UseGitVersion@5
+    inputs:
+      versionSpec: '2.x'
+    displayName: 'Use Git'
+
+  - script: git clone https://github.com/flutter/flutter.git -b stable --depth 1
+    displayName: 'Clone Flutter SDK'
+
+  - script: |
+      echo "##vso[task.prependpath]$(System.DefaultWorkingDirectory)/flutter/bin"
+      flutter --version
+    displayName: 'Add Flutter to PATH'
+
+  - script: flutter pub get
+    displayName: 'Install dependencies'
+
+  - script: dart format --output=none .
+    displayName: 'Verify formatting'
+
+  - script: flutter analyze
+    displayName: 'Analyze project source'
+
+  - script: flutter test
+    displayName: 'Run tests'
+
+  - script: flutter build appbundle
+    displayName: 'Build appbundle'
+
