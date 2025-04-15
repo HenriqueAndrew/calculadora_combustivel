@@ -35,12 +35,12 @@ steps:
   # Passo 4: Verificar formatação do código
   - script: |
       dart format --output=none . || true
-    displayName: 'Verificar formatação (ignorar falha)'
+    displayName: 'Verificar formatação'
 
   # Passo 5: Analisar o código
   - script: |
       flutter analyze --no-fatal-warnings || true
-    displayName: 'Analisar código (sem falhar em warnings)'
+    displayName: 'Analisar código'
 
   # Passo 6: Executar testes
   - script: |
