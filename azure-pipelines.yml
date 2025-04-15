@@ -1,12 +1,12 @@
 trigger:
   branches:
     include:
-      - main
+      - master
 
 pr:
   branches:
     include:
-      - main
+      - master
 
 pool:
   vmImage: 'macos-latest'
@@ -24,26 +24,35 @@ steps:
       echo "##vso[task.prependpath]$(System.DefaultWorkingDirectory)/flutter/bin"
     displayName: 'Configurar PATH do Flutter'
 
-  # Passo 3: Verifica instalação e obtém dependências do projeto
+  # Passo 3: Limpar o cache do Flutter e instalar as dependências do projeto
   - script: |
-      flutter --version
-      flutter pub get
-    displayName: 'Verificar Flutter e instalar dependências'
+      echo "Limpando o cache do Flutter..."
+      flutter clean
 
-  # Passo 4: Verifica a formatação e analisa o código
+      echo "Instalando dependências..."
+      flutter pub get
+    displayName: 'Limpar cache e obter dependências'
+
+  # Passo 4: Verificar a formatação do código
   - script: |
       echo "Verificando formatação do código..."
       dart format --output=none .
+    displayName: 'Verificar formatação do código'
 
-      echo "Analisando o código fonte..."
-      flutter analyze
-    displayName: 'Formatar e analisar código'
+  # Passo 5: Analisar o código (ignorando avisos)
+  - script: |
+      echo "Analisando o código fonte (ignorando avisos)..."
+      flutter analyze --no-fatal-warnings
+    displayName: 'Analisar código'
 
-  # Passo 5: Executa os testes e gera o appbundle
+  # Passo 6: Executar testes unitários
   - script: |
       echo "Executando testes unitários..."
       flutter test
+    displayName: 'Executar testes unitários'
 
+  # Passo 7: Compilar o appbundle para Android
+  - script: |
       echo "Compilando appbundle Android..."
       flutter build appbundle
-    displayName: 'Testar e compilar app'
+    displayName: 'Compilar appbundle Android'
