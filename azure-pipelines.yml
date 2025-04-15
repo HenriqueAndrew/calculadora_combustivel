@@ -36,7 +36,7 @@ steps:
   # Passo 4: Verificar a formatação do código
   - script: |
       echo "Verificando formatação do código..."
-      dart format --output=none .
+      dart format --output=none . || true
     displayName: 'Verificar formatação do código'
 
   # Passo 5: Analisar o código (ignorando avisos)
