@@ -1,44 +1,47 @@
 trigger:
   branches:
     include:
-      - master
+      - main
 
 pr:
   branches:
     include:
-      - master
+      - main
 
 pool:
   vmImage: 'macos-latest'
 
 steps:
-  # Clona o repositório Flutter estável
-  - script: git clone https://github.com/flutter/flutter.git -b stable --depth 1
-    displayName: 'Clone Flutter SDK'
-
-  # Adiciona o Flutter ao PATH
   - script: |
-      echo "##vso[task.prependpath]$(System.DefaultWorkingDirectory)/flutter/bin"
+      # Clona o repositório do Flutter na versão estável
+      echo "Clonando Flutter..."
+      git clone https://github.com/flutter/flutter.git -b stable --depth 1
+
+      # Adiciona o Flutter ao PATH para os próximos comandos funcionarem
+      echo "Adicionando Flutter ao PATH..."
+      export PATH="$PWD/flutter/bin:$PATH"
+
+      # Verifica a versão do Flutter instalada
+      echo "Verificando versão do Flutter..."
       flutter --version
-    displayName: 'Add Flutter to PATH'
 
-  # Instala dependências do projeto
-  - script: flutter pub get
-    displayName: 'Install dependencies'
+      # Instala as dependências do projeto definidas no pubspec.yaml
+      echo "Instalando dependências..."
+      flutter pub get
 
-  # Verifica formatação do código
-  - script: dart format --output=none .
-    displayName: 'Verify formatting'
+      # Verifica a formatação do código Dart
+      echo "Verificando formatação do código..."
+      dart format --output=none .
 
-  # Analisa o código Dart/Flutter
-  - script: flutter analyze
-    displayName: 'Analyze project source'
+      # Realiza análise estática no código
+      echo "Analisando o código do projeto..."
+      flutter analyze
 
-  # Roda testes
-  - script: flutter test
-    displayName: 'Run tests'
+      # Executa os testes automatizados
+      echo "Executando testes..."
+      flutter test
 
-  # Gera o appbundle Android
-  - script: flutter build appbundle
-    displayName: 'Build appbundle'
-
+      # Gera o appbundle para Android
+      echo "Gerando appbundle..."
+      flutter build appbundle
+    displayName: 'Configurar Flutter e Executar Pipeline'
