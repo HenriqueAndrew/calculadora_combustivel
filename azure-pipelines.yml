@@ -12,36 +12,38 @@ pool:
   vmImage: 'macos-latest'
 
 steps:
+  # Passo 1: Clona o repositório do Flutter
   - script: |
-      # Clona o repositório do Flutter na versão estável
-      echo "Clonando Flutter..."
+      echo "Clonando Flutter na branch estável..."
       git clone https://github.com/flutter/flutter.git -b stable --depth 1
+    displayName: 'Clonar Flutter'
 
-      # Adiciona o Flutter ao PATH para os próximos comandos funcionarem
-      echo "Adicionando Flutter ao PATH..."
-      export PATH="$PWD/flutter/bin:$PATH"
+  # Passo 2: Adiciona Flutter ao PATH para os próximos comandos
+  - script: |
+      echo "Configurando PATH do Flutter..."
+      echo "##vso[task.prependpath]$(System.DefaultWorkingDirectory)/flutter/bin"
+    displayName: 'Configurar PATH do Flutter'
 
-      # Verifica a versão do Flutter instalada
-      echo "Verificando versão do Flutter..."
+  # Passo 3: Verifica instalação e obtém dependências do projeto
+  - script: |
       flutter --version
-
-      # Instala as dependências do projeto definidas no pubspec.yaml
-      echo "Instalando dependências..."
       flutter pub get
+    displayName: 'Verificar Flutter e instalar dependências'
 
-      # Verifica a formatação do código Dart
+  # Passo 4: Verifica a formatação e analisa o código
+  - script: |
       echo "Verificando formatação do código..."
       dart format --output=none .
 
-      # Realiza análise estática no código
-      echo "Analisando o código do projeto..."
+      echo "Analisando o código fonte..."
       flutter analyze
+    displayName: 'Formatar e analisar código'
 
-      # Executa os testes automatizados
-      echo "Executando testes..."
+  # Passo 5: Executa os testes e gera o appbundle
+  - script: |
+      echo "Executando testes unitários..."
       flutter test
 
-      # Gera o appbundle para Android
-      echo "Gerando appbundle..."
+      echo "Compilando appbundle Android..."
       flutter build appbundle
-    displayName: 'Configurar Flutter e Executar Pipeline'
+    displayName: 'Testar e compilar app'
